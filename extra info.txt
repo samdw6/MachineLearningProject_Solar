@@ -1,0 +1,41 @@
+PROJECT SOLAR EXTRA UITLEG 
+
+uit de historische data kan het model leren dat de pannelen niet altijd het best presteren bal op de middag, want je dak staat niet perse naar het zuiden gericht
+
+voor de komende 48u, uur per uur voorspellen (met een waarde in kWh)
+
+moeilijkste is de datapreparatie (3 datasets koppelen aan elkaar) LET OP veel studenten hebben deze al fout gekoppeld
+=> uiteindelijk 1 tabel met rijen en kolommen en ZEKER niet meer rijen dan voordien, bv 3 datasets met 1000 rijen, uitkomst kan geen 30000 rijen hebben
+best evenveel of minder
+
+nieuw gepubliceerde data heeft meer rijen => meer data dus we kunnen potentieel een beter model opstellen
+
+gebruik je gezond verstand voor de logica
+
+eenheden van de kolommen zijn dezelfde als de gegeven waarden (temp in °C niet in Fh° bvb, cloudiness tussen 0-10 of 0-8 of ... , tijdstippen ook belangrijk) 
+
+alleen maar dingen uit de les gebruiken
+
+het is in prinicipe een tijdsreeksprobleem, maar dit hebben we niet in de lessen gezien dus als je dat gebruikt heb je nul
+
+notebook om het model op te stellen, data te exploreren etc. (criteria, waarde voor mean absolute (niet percentage!) error zichtbaar in ipynb)
+
+er kunnen waarden ontbreken, verkeerd zijn bvb kWh gaat van 2 naar 200 in 1 uur => verkeerd. ook negatieve kWh KAN NIET (verwijderen)
+
+sunrise bevat opgang en ondergang tot eind dit jaar en is ons gegeven, aan ons om te bepalen of we deze gebruiken in ons model
+
+denk goed na wat te doen met de timestamp, er kan veel info in zitten, maar is misschien niet zo nuttig
+
+denk goed na over de relevante dingen
+
+mean error; kijken naar top uren van de dag dat je daar niet te ver naast zit. Stel dat je het model wil verkopen en deze persoon is kritisch 'hoe nauwkeurig?', moet je kunnen antwoorden en interpreteren of deze goed of slecht is
+
+0.5 kWh per uur als MAE is veel te veel blijkbaar
+
+
+** presentatie **
+
+weer-csv genereren op het moment zelf en wij nemen die als input, 
+python script leest dat in en output is de voorspelling (zie 141 tips)
+
+
