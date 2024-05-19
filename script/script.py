@@ -1,42 +1,30 @@
 import pandas as pd
 import joblib
 from datetime import datetime
-
-# Load your regression model
 model = joblib.load("C:/HoGent/Jaar2/ML/Project/MachineLearningProject_Solar/script/best_model.joblib")
+forecast_df = pd.read_csv(r"C:/HoGent/Jaar2/ML/Project/MachineLearningProject_Solar/data/forecast.csv")
+sunset_df = pd.read_csv(r"C:/HoGent/Jaar2/ML/Project/MachineLearningProject_Solar/data/sunrise-sunset.csv")
+# day of the year
+forecast_df['timestamp'] = pd.to_datetime(forecast_df['timestamp'])
+forecast_df['day_of_year'] = forecast_df['timestamp'].dt.dayofyear
 
-# Read forecast data from CSV
-forecast_df = pd.read_csv("C:/HoGent/Jaar2/ML/Project/MachineLearningProject_Solar/data/forecast.csv")
-sunset_df = pd.read_csv("C:/HoGent/Jaar2/ML/Project/MachineLearningProject_Solar/data/sunset.csv")
+# sunrise and sunset
+sunset_df['datum'] = pd.to_datetime(sunset_df['datum'])
+sunset_df['day_of_year'] = sunset_df['datum'].dt.dayofyear
+# merge the two dataframes
+merged_forecast_df = pd.merge(forecast_df, sunset_df, on='day_of_year', how='left')
+merged_forecast_df.drop_duplicates(subset=['timestamp'], inplace=True)
+merged_forecast_df['hour'] = merged_forecast_df['timestamp'].dt.hour
+# convert to floats (Ondergang, Opkomst, Op ware middag)
+merged_forecast_df['Ondergang'] = merged_forecast_df['Ondergang'].astype(str).str.replace(':', '').astype(float)
+merged_forecast_df['Opkomst'] = merged_forecast_df['Opkomst'].astype(str).str.replace(':','').astype(float)
+merged_forecast_df['Op ware middag'] = merged_forecast_df['Op ware middag'].astype(str).str.replace(':','').astype(float)
+# drop columns
+merged_forecast_df = merged_forecast_df.drop(columns=['timestamp', 'datum'])
+merged_forecast_df = merged_forecast_df[['temp', 'humidity_relative', 'pressure', 'cloudiness', 'Opkomst', 'Op ware middag', 'Ondergang', 'hour', 'day_of_year']]
+# run model on forecast data
+predictions = model.predict(merged_forecast_df)
+# save predictions
+output_df = pd.DataFrame({'prediction': predictions})
 
-# Merge the forecast data with the sunset data
-merged_forecast_df = pd.merge(forecast_df, sunset_df, on='timestamp')
-
-# save merged data to csv
-merged_forecast_df.to_csv("C:/HoGent/Jaar2/ML/Project/MachineLearningProject_Solar/data/forecast_merged.csv", index=False)
-
-
-
-
-""" def predict_kwh(forecast_df):
-    # Preprocess your forecast data
-    # Ensure the columns are in the same order as they were during training
-    forecast_features = forecast_df[['temp', 'pressure', 'cloudiness', 'humidity_relative']]
-
-    # Use the model to make predictions
-    predictions = model.predict(forecast_features)
-
-    return predictions
-
-
-
-# Extract day of the year from timestamp column
-forecast_df['day_of_year'] = pd.to_datetime(forecast_df['timestamp']).dt.dayofyear
-
-# Predict the kWh for the next 48 hours
-predictions = predict_kwh(forecast_df)
-
-# Output the predictions with corresponding hour
-for hour, prediction in zip(forecast_df['hour'], predictions):
-    print(f"Voorspelling voor {hour}u: {prediction:.2f} kWh")
- """
+print(output_df)
