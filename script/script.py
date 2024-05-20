@@ -28,3 +28,16 @@ predictions = model.predict(merged_forecast_df)
 output_df = pd.DataFrame({'prediction': predictions})
 
 print(output_df)
+
+# bar chart
+import matplotlib.pyplot as plt
+import numpy as np
+hours = merged_forecast_df["hour"]
+
+
+hours = np.arange(0, 48, 1)
+plt.bar(hours, predictions)
+plt.xlabel('hour')
+plt.ylabel('prediction')
+plt.title('Prediction per hour')
+plt.show()
